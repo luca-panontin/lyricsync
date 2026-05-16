@@ -145,10 +145,15 @@ public final class PlayerMonitor {
             SharedMusicState.notifyChanged();
             if (appContext != null) LyricSyncNotificationManager.update(appContext);
 
+            final String finalTitle = title;
+            final String finalArtist = artist;
+            final double finalDuration = duration;
+            final String finalKey = key;
+
             EXECUTOR.execute(() -> {
-                LyricsFetchResult result = lyricsRepository.fetchLyrics(title, artist, duration);
+                LyricsFetchResult result = lyricsRepository.fetchLyrics(finalTitle, finalArtist, finalDuration);
                 MAIN.post(() -> {
-                    if (!key.equals(lastTrackKey)) return;
+                    if (!finalKey.equals(lastTrackKey)) return;
                     SharedMusicState.lyrics = result.lines;
                     SharedMusicState.status = result.status;
                     SharedMusicState.currentLineIndex = LrcParser.currentLineIndex(
